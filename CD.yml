@@ -3,7 +3,7 @@ env:
   app_version:  "3.0.0"
   project_id:   "terraform-project-ciilbadana"
   repo_region:  "us-central1"
-  app_name:     "artemis"
+  app_name:     "nodejs"
 
 
 
