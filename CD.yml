@@ -1,0 +1,79 @@
+env:
+  repo:         "https://github.com/yaska258/nodejs.git"
+  app_version:  "3.0.0"
+  project_id:   "terraform-project-ciilbadana"
+  repo_region:  "us-central1"
+  app_name:     "artemis"
+
+
+
+name: ContinuousDelivery
+# Controls when the workflow will run
+on:
+  # Triggers the workflow on push or pull request events but only for the "main" branch
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+
+  # Allows you to run this workflow manually from the Actions tab
+  workflow_dispatch:
+
+# A workflow run is made up of one or more jobs that can run sequentially or in parallel
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - name: Clone a repo
+        run: |
+          git clone ${{ env.repo }}
+
+
+      - name: Switch Branches
+        working-directory: ${{ env.app_name }}
+        run: |
+          git checkout ${{ env.app_version }}
+          ls -l
+
+
+
+      - name: Build Image
+        working-directory: ${{ env.app_name }}
+        run: |
+          docker build -t ${{ env.app_name }}:${{ env.app_version }}   . 
+
+
+
+      - name: Tag Image
+        working-directory: ${{ env.app_name }}
+        run: |
+          docker image tag ${{ env.app_name }}:${{ env.app_version }} ${{ env.repo_region }}-docker.pkg.dev/${{ env.project_id }}/${{ env.app_name }}/${{ env.app_name }}:${{ env.app_version }}     
+
+
+
+      - name: Run a one-line script
+        run: gcloud version 
+
+
+      - id: 'auth'
+        name: 'Authenticate to Google Cloud'
+        uses: 'google-github-actions/auth@v0'
+        with:
+          credentials_json: '${{ secrets.SERVICE_ACCOUNT }}'
+
+
+
+
+      - name: Authenticate to repository
+        run: |
+          gcloud auth configure-docker  ${{ env.repo_region }}-docker.pkg.dev
+
+        
+
+      # Runs a set of commands using the runners shell
+      - name: Image push
+        working-directory: ${{ env.app_name }}
+        run: |
+          docker push ${{ env.repo_region }}-docker.pkg.dev/${{ env.project_id }}/${{ env.app_name }}/${{ env.app_name }}:${{ env.app_version }}  
