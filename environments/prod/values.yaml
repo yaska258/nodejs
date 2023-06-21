@@ -15,11 +15,11 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod-dns01
     acme.cert-manager.io/http01-edit-in-place: "true"
   hosts:
-    - host: prod.yasminey.com
+    - host: prodnodejs.yasminey.com
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: 
    - secretName: nodejs-prod-tls
      hosts:
-       - prod.yasminey.com
+       - prodnodejs.yasminey.com
