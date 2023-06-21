@@ -15,11 +15,11 @@ ingress:
     cert-manager.io/cluster-issuer: letsencrypt-prod-dns01
     acme.cert-manager.io/http01-edit-in-place: "true"
   hosts:
-    - host: devnodejs.yasminey.com
+    - host: dev.yasminey.com
       paths:
         - path: /
           pathType: ImplementationSpecific
   tls: 
    - secretName: nodejs-dev-tls
      hosts:
-       - devnodejs.yasminey.com
+       - dev.yasminey.com
